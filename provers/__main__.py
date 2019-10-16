@@ -14,9 +14,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+import subprocess
+import sys
+
+from . import __version__
+
 
 def run():
-    print("Hello")
+    print("python version:", sys.version.replace('\n', ' '))
+    print("provers version:", __version__)
+
+    p = subprocess.Popen(['prover9'], stdin=subprocess.DEVNULL,
+                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    m = re.match(r'^(?:[^\n]*\n)*(Prover[^\n]*)\n',
+                 p.communicate()[0].decode('ascii'))
+    print("prover9 version", m.group(1) if m else 'not found')
+
+    p = subprocess.Popen(['mace4'], stdin=subprocess.DEVNULL,
+                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    m = re.match(r'^(?:[^\n]*\n)*(Mace[^\n]*)\n',
+                 p.communicate()[0].decode('ascii'))
+    print("mace4 version:", m.group(1) if m else 'not found')
 
 
 if __name__ == '__main__':

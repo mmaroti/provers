@@ -18,14 +18,18 @@ from setuptools import setup
 
 setup(
     name='provers',
-    version='0.1',
     packages=['provers'],
     license='GPL 3',
+    url="https://github.com/mmaroti/provers",
+    author="Miklos Maroti",
+    author_email="mmaroti@gmail.com",
     description="Library to access different different theorem provers",
     long_description=open('README.md').read(),
     # do not list standard packages
     python_requires='>=3.5',
+    use_scm_version=True,
     install_requires=[
+        'setuptools_scm'        
     ],
     entry_points={
         'console_scripts': [
