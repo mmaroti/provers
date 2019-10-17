@@ -21,21 +21,22 @@ import sys
 from . import __version__
 
 
+def get_version(command, prefix):
+    try:
+        p = subprocess.Popen([command], stdin=subprocess.DEVNULL,
+                             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        m = re.match('^(?:[^\n]*\n)*(' + prefix + '[^\n]*)\n',
+                     p.communicate()[0].decode('ascii'))
+        return m.group(1) if m else "unknown"
+    except FileNotFoundError:
+        return "not installed"
+
+
 def run():
     print("python version:", sys.version.replace('\n', ' '))
     print("provers version:", __version__)
-
-    p = subprocess.Popen(['prover9'], stdin=subprocess.DEVNULL,
-                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    m = re.match(r'^(?:[^\n]*\n)*(Prover[^\n]*)\n',
-                 p.communicate()[0].decode('ascii'))
-    print("prover9 version", m.group(1) if m else 'not found')
-
-    p = subprocess.Popen(['mace4'], stdin=subprocess.DEVNULL,
-                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    m = re.match(r'^(?:[^\n]*\n)*(Mace[^\n]*)\n',
-                 p.communicate()[0].decode('ascii'))
-    print("mace4 version:", m.group(1) if m else 'not found')
+    print("prover9 version:", get_version('prover9', 'Prover9'))
+    print("mace4 version:", get_version('mace4', 'Mace4'))
 
 
 if __name__ == '__main__':
