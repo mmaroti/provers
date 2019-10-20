@@ -18,3 +18,5 @@ try:
     __version__ = get_distribution(__name__).version
 except DistributionNotFound:
     __version__ = 'unknown'
+
+from .util import get_solver_path, print_versions

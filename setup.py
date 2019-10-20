@@ -16,13 +16,19 @@
 
 from setuptools import setup
 from setuptools.command.build_py import build_py
+from setuptools.dist import Distribution
 import subprocess
 
 
 class BuildPy(build_py):
     def run(self):
-        subprocess.check_call(['make', 'all'], cwd='bin')
+        subprocess.check_call(['make', 'all'], cwd='provers/bin')
         build_py.run(self)
+
+
+class BinaryDistribution(Distribution):
+    def has_ext_modules(self):
+        return True
 
 
 setup(
@@ -43,10 +49,14 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'provers = provers.__main__:run',
+            'provers = provers.util:print_versions',
         ]
     },
     cmdclass={
         'build_py': BuildPy,
     },
+    distclass=BinaryDistribution,
+    package_data={
+        'provers': ['bin/prover9', 'bin/mace4']
+    }
 )

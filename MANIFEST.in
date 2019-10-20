@@ -1,1 +1,2 @@
-include bin/Makefile
+exclude provers/bin/*
+include provers/bin/Makefile
