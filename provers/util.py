@@ -26,10 +26,13 @@ def get_solver_path(command):
     return command2 if os.path.isfile(command2) else command
 
 
-def get_solver_version(command, prefix):
+def get_solver_version(args, prefix):
     try:
-        p = subprocess.Popen([get_solver_path(command)], stdin=subprocess.DEVNULL,
-                             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        p = subprocess.Popen(
+            [get_solver_path(args[0])] + args[1:],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL)
         m = re.match('^(?:[^\n]*\n)*(' + prefix + '[^\n]*)\n',
                      p.communicate()[0].decode('ascii'))
         return m.group(1) if m else "unknown"
@@ -42,6 +45,7 @@ def print_versions():
 
     print("python version:", sys.version.replace('\n', ' '))
     print("provers version:", __version__)
-    print("prover9 version:", get_solver_version('prover9', 'Prover9'))
-    print("mace4 version:", get_solver_version('mace4', 'Mace4'))
-    print("vampire version:", get_solver_version('vampire', '% Version:'))
+    print("prover9 version:", get_solver_version(['prover9'], 'Prover9'))
+    print("vampire version:", get_solver_version(['vampire'], '% Version:'))
+    print("eprover version:", get_solver_version(
+        ['eprover', '--version'], 'E'))

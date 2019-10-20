@@ -57,6 +57,15 @@ setup(
     },
     distclass=BinaryDistribution,
     package_data={
-        'provers': ['bin/prover9', 'bin/mace4', 'bin/vampire']
+        'provers': [
+            'bin/isofilter',
+            'bin/prooftrans',
+            'bin/tptp_to_ladr',
+            'bin/ladr_to_tptp',
+            'bin/mace4',
+            'bin/prover9',
+            'bin/vampire',
+            'bin/eprover',
+        ]
     }
 )
