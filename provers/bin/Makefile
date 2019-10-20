@@ -19,6 +19,6 @@ vampire:
 	mkdir tmp || true
 	cd tmp && git clone https://github.com/vprover/vampire.git || true
 	cd tmp/vampire && git pull
-	cd tmp/vampire && make -j8 vampire_rel
-	cp tmp/vampire/vampire_rel_master* vampire
+	cd tmp/vampire && make -j8 vampire_rel_static
+	cp tmp/vampire/vampire_rel_static_master* vampire
 	rm -rf tmp
