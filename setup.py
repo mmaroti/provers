@@ -15,6 +15,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup
+from setuptools.command.build_py import build_py
+import subprocess
+
+
+class BuildPy(build_py):
+    def run(self):
+        subprocess.check_call(['make', 'all'], cwd='bin')
+        build_py.run(self)
+
 
 setup(
     name='provers',
@@ -28,11 +37,16 @@ setup(
     python_requires='>=3.5',
     use_scm_version=True,
     setup_requires=[
-        'setuptools_scm'
+        'setuptools_scm',
+    ],
+    install_requires=[
     ],
     entry_points={
         'console_scripts': [
-            'provers = provers.__main__:run'
+            'provers = provers.__main__:run',
         ]
-    }
+    },
+    cmdclass={
+        'build_py': BuildPy,
+    },
 )
