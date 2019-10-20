@@ -26,15 +26,23 @@ def get_solver_path(command):
     return command2 if os.path.isfile(command2) else command
 
 
+def run_solver(args, input, timeout=None):
+    try:
+        r = subprocess.run(
+            [get_solver_path(args[0])] + args[1:],
+            input=str(input),
+            timeout=None if timeout is None else float(timeout),
+            stdout=subprocess.PIPE,
+            encoding='ascii')
+        return r.stdout
+    except subprocess.TimeoutExpired:
+        return 'timeout'
+
+
 def get_solver_version(args, prefix):
     try:
-        p = subprocess.Popen(
-            [get_solver_path(args[0])] + args[1:],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL)
         m = re.match('^(?:[^\n]*\n)*(' + prefix + '[^\n]*)\n',
-                     p.communicate()[0].decode('ascii'))
+                     run_solver(args, ''))
         return m.group(1) if m else "unknown"
     except FileNotFoundError:
         return "not installed"
@@ -45,7 +53,19 @@ def print_versions():
 
     print("python version:", sys.version.replace('\n', ' '))
     print("provers version:", __version__)
-    print("prover9 version:", get_solver_version(['prover9'], 'Prover9'))
-    print("vampire version:", get_solver_version(['vampire'], '% Version:'))
+    print("prover9 version:", get_solver_version(
+        ['prover9', '--version'], 'Prover9'))
+    print("vampire version:", get_solver_version(
+        ['vampire', '--version'], 'Vampire'))
     print("eprover version:", get_solver_version(
         ['eprover', '--version'], 'E'))
+
+
+def run():
+    args = sys.argv
+    if len(args) <= 1:
+        print_versions()
+        return
+
+    import os
+    os.execvp(get_solver_path(args[1]), args[1:])

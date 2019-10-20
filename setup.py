@@ -49,7 +49,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'provers = provers.util:print_versions',
+            'provers = provers.util:run',
         ]
     },
     cmdclass={

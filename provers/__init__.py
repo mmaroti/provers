@@ -19,4 +19,4 @@ try:
 except DistributionNotFound:
     __version__ = 'unknown'
 
-from .util import get_solver_path, print_versions
+from .util import get_solver_path, run_solver, print_versions
