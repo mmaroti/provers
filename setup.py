@@ -57,6 +57,6 @@ setup(
     },
     distclass=BinaryDistribution,
     package_data={
-        'provers': ['bin/prover9', 'bin/mace4']
+        'provers': ['bin/prover9', 'bin/mace4', 'bin/vampire']
     }
 )
