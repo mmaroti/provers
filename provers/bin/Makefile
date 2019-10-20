@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-all: prover9 vampire
+all: prover9 vampire eprover
 
 clean:
 	rm isofilter prooftrans tptp_to_ladr ladr_to_tptp mace4 prover9 || true
