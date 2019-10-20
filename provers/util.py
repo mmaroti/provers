@@ -44,3 +44,4 @@ def print_versions():
     print("provers version:", __version__)
     print("prover9 version:", get_solver_version('prover9', 'Prover9'))
     print("mace4 version:", get_solver_version('mace4', 'Mace4'))
+    print("vampire version:", get_solver_version('vampire', '% Version:'))
