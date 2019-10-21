@@ -1,6 +1,7 @@
 .vscode
 __pycache__
 *.egg-info/
+.eggs/
 dist/
 build/
 provers/bin/*
