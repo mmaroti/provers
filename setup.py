@@ -40,7 +40,7 @@ setup(
     url="https://github.com/mmaroti/provers",
     author="Miklos Maroti",
     author_email="mmaroti@gmail.com",
-    description="Library to access different different theorem provers",
+    description="Library to access different theorem provers",
     long_description=open('README.md').read(),
     python_requires='>=3.5',
     use_scm_version=True,
@@ -69,5 +69,12 @@ setup(
             'bin/vampire',
             'bin/eprover',
         ]
-    }
+    },
+    classifiers=[
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+        'Programming Language :: Python :: 3',
+        'Topic :: Scientific/Engineering :: Mathematics',
+
+    ],
+    keywords='tptp logic theorem prover',
 )

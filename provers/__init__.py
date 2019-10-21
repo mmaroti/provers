@@ -20,3 +20,4 @@ except DistributionNotFound:
     __version__ = 'unknown'
 
 from .util import get_program_path, run_program, print_versions
+from .fol import *
