@@ -14,6 +14,7 @@ prover9:
 	cd tmp/LADR-2009-11A/provers.src && sed -i.old 's/^\([ \t]*\$$(CC).*\) -lm \(.*\)$$/\1 \2 -lm/g' Makefile
 	cd tmp/LADR-2009-11A && make all
 	cp tmp/LADR-2009-11A/bin/isofilter .
+	cp tmp/LADR-2009-11A/bin/interpformat .
 	cp tmp/LADR-2009-11A/bin/prooftrans .
 	cp tmp/LADR-2009-11A/bin/tptp_to_ladr .
 	cp tmp/LADR-2009-11A/bin/ladr_to_tptp .

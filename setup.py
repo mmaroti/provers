@@ -23,7 +23,7 @@ import subprocess
 class BuildPy(build_py):
     def run(self):
         subprocess.call(['make', 'prover9'], cwd='provers/bin')
-        subprocess.call(['make', 'vampire'], cwd='provers/bin')
+        #subprocess.call(['make', 'vampire'], cwd='provers/bin')
         subprocess.call(['make', 'eprover'], cwd='provers/bin')
         build_py.run(self)
 
@@ -61,6 +61,7 @@ setup(
     package_data={
         'provers': [
             'bin/isofilter',
+            'bin/interpformat',
             'bin/prooftrans',
             'bin/tptp_to_ladr',
             'bin/ladr_to_tptp',
