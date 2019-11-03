@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .util import run_solver
+from .util import run_program
 
 class Proof():
     def __init__(self, formula_list, syntax='Prover9'):
@@ -118,7 +118,6 @@ def op_hom(A,B): # return string of homomorphism equations
     st = ''
     for s in B.operations:
         if type(B.operations[s]) == list:
-            base = range(len(B.operations[s]))
             if type(B.operations[s][0]) == list:
                 st += " & h(x "+s+" y) = h(x) "+s+" h(y)"
             elif s=="'": st += " & h(x') = h(x)'"
@@ -246,6 +245,7 @@ class Model():
         if len(m)==0: return False
         return m[0].operations['h'][self.cardinality:]
 
+    @staticmethod
     def mace4format(A):
         if A.is_lattice(): A.get_join()
         st = "interpretation("+str(A.cardinality)+", [number = "+str(A.index)+", seconds = 0], [\n"
@@ -256,8 +256,8 @@ class Model():
 
 def isofilter(li):
     st = "\n".join([x.mace4format() for x in li])
-    st = run_solver(['isofilter'], st)
-    st = run_solver(['interpformat','portable'], st)
+    st = run_program(['isofilter'], st)
+    st = run_program(['interpformat','portable'], st)
     l = eval(st.replace("\\","\\\\"))
     models = []
     for m in l:
@@ -315,7 +315,7 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
         if cardinality != None:
             st = str(cardinality)
             mace_params = ['-n',st,'-N',st]+([] if one else ['-m','-1'])+['-S','1']
-        out_str = run_solver(['mace4','-t',str(mace_seconds)]+mace_params, in_str)
+        out_str = run_program(['mace4','-t',str(mace_seconds)]+mace_params, in_str)
         #print(str(mace_params)+"**"+out_str)
         ind = out_str.find("%%ERROR")
         if ind != -1: 
@@ -323,12 +323,12 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
             return
         if out_str.find('Exiting with failure') == -1:
             if cardinality != None and not one and noniso: #find all models of size n
-                out_str = run_solver(['interpformat','standard'], out_str)
+                out_str = run_program(['interpformat','standard'], out_str)
                 params = '\"+ * v ^ \' - ~ \\ / -> A B C D E F G H I J K P Q R S T U V W a b c d e f g h i j k p q r s t 0 1 <= -<\"'
-                out_str = run_solver(['isofilter','check',params,'output',params], out_str)
-                out_str = run_solver(['interpformat','portable'], out_str)
+                out_str = run_program(['isofilter','check',params,'output',params], out_str)
+                out_str = run_program(['interpformat','portable'], out_str)
             else:
-                out_str = run_solver(['interpformat','portable'], out_str)
+                out_str = run_program(['interpformat','portable'], out_str)
             if out_str!='':
                 #print(out_str)
                 li = eval(out_str.replace("\\","\\\\"))
@@ -347,13 +347,13 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
             return []
         elif mace_seconds>=5: return "No models found after "+mace_seconds+" seconds"
 
-    out_str = run_solver(['prover9','-t',str(prover_seconds)], in_str)
+    out_str = run_program(['prover9','-t',str(prover_seconds)], in_str)
     ind = out_str.find("%%ERROR")
     if ind != -1: 
         print(out_str[ind+2:])
         return
     if True:#res==0 or res==1 or res==256: 
-        out_str = run_solver(['prooftrans','expand','renumber', 'parents_only'], out_str)
+        out_str = run_program(['prooftrans','expand','renumber', 'parents_only'], out_str)
         lst = []
         ind1 = out_str.find("PROOF ===")
         ind2 = out_str.find("end of proof ===")
