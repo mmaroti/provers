@@ -16,6 +16,7 @@
 
 from .util import run_program
 
+
 class Proof():
     def __init__(self, formula_list, syntax='Prover9'):
         """
@@ -44,17 +45,19 @@ class Proof():
 
 def opstr(m):  # convert 2-dim list to a compact string for display
     nr = len(m)
-    if nr == 0: return "[]"
+    if nr == 0:
+        return "[]"
     nc = len(m[0])
-    s = [[str(y).replace(' ','') for y in x] for x in m]
+    s = [[str(y).replace(' ', '') for y in x] for x in m]
     width = [max([len(s[x][y]) for x in range(nr)]) for y in range(nc)]
-    s = [[" "*(width[y]-len(s[x][y]))+s[x][y] for y in range(nc)]\
-        for x in range(nr)]
+    s = [[" "*(width[y]-len(s[x][y]))+s[x][y] for y in range(nc)]
+         for x in range(nr)]
     rows = ["["+",".join(x)+"]" for x in s]
     s = "[\n"+",\n".join(rows)+"]"
     return s
 
-def oprelstr(oprel): # convert a list of operations or relations to a string
+
+def oprelstr(oprel):  # convert a list of operations or relations to a string
     st = ''
     for x in oprel:
         if type(oprel[x]) == list and type(oprel[x][0]) == list:
@@ -63,71 +66,95 @@ def oprelstr(oprel): # convert a list of operations or relations to a string
             st += '"'+x+'":' + str(oprel[x]) + ', '
     return st[:-2]
 
-def op_var_pos_diag(op,s,c):
+
+def op_var_pos_diag(op, s, c):
     if type(op[s]) == list:
         base = range(len(op[s]))
         if type(op[s][0]) == list:
-            return [c+str(x)+" "+s+" "+c+str(y)+" = "+c+str(op[s][x][y]) 
+            return [c+str(x)+" "+s+" "+c+str(y)+" = "+c+str(op[s][x][y])
                     for x in base for y in base]
-        elif s=="'": return [c+str(x)+s+" = "+c+str(op[s][x]) for x in base]
-        else: return [s+"("+c+str(x)+") = "+c+str(op[s][x]) for x in base]
-    else: return [s+" = "+c+str(op[s])]
+        elif s == "'":
+            return [c+str(x)+s+" = "+c+str(op[s][x]) for x in base]
+        else:
+            return [s+"("+c+str(x)+") = "+c+str(op[s][x]) for x in base]
+    else:
+        return [s+" = "+c+str(op[s])]
 
-def rel_var_pos_diag(rel,s,c):
+
+def rel_var_pos_diag(rel, s, c):
     if type(rel[s]) == list:
         base = range(len(rel[s]))
         if type(rel[s][0]) == list:
-            if type(rel[s][0][0]) == list: # if prefix ternary relation
-                return [s+"("+c+str(x)+","+c+str(y)+","+c+str(z)+")" 
-                    for x in base for y in base for z in base if rel[s][x][y][z]]                        
-            else: # if infix binary relation
-                return [c+str(x)+" "+s+" "+c+str(y) 
-                    for x in base for y in base if rel[s][x][y]]
-        else: return [s+"("+c+str(x)+")" for x in base if rel[s][x]]
-    else: return "not a relation"
+            if type(rel[s][0][0]) == list:  # if prefix ternary relation
+                return [s+"("+c+str(x)+","+c+str(y)+","+c+str(z)+")"
+                        for x in base for y in base for z in base if rel[s][x][y][z]]
+            else:  # if infix binary relation
+                return [c+str(x)+" "+s+" "+c+str(y)
+                        for x in base for y in base if rel[s][x][y]]
+        else:
+            return [s+"("+c+str(x)+")" for x in base if rel[s][x]]
+    else:
+        return "not a relation"
 
-def op_var_diag(op,s,c,n=0):
+
+def op_var_diag(op, s, c, n=0):
     if type(op[s]) == list:
         base = range(len(op[s]))
         if type(op[s][0]) == list:
-            return [c+str(x+n)+" "+s+" "+c+str(y+n)+" = "+c+str(op[s][x][y]+n) 
+            return [c+str(x+n)+" "+s+" "+c+str(y+n)+" = "+c+str(op[s][x][y]+n)
                     for x in base for y in base]
-        elif s=="'": return [c+str(x+n)+s+" = "+c+str(op[s][x]+n) for x in base]
-        else: return [s+"("+c+str(x+n)+") = "+c+str(op[s][x]+n) for x in base]
-    else: return [s+" = "+c+str(op[s]+n)]
+        elif s == "'":
+            return [c+str(x+n)+s+" = "+c+str(op[s][x]+n) for x in base]
+        else:
+            return [s+"("+c+str(x+n)+") = "+c+str(op[s][x]+n) for x in base]
+    else:
+        return [s+" = "+c+str(op[s]+n)]
 
-def rel_var_diag(rel,s,c,n=0):
+
+def rel_var_diag(rel, s, c, n=0):
     if type(rel[s]) == list:
         base = range(len(rel[s]))
         if type(rel[s][0]) == list:
-            if type(rel[s][0][0]) == list: # prefix ternary relation
-                return [("" if rel[s][x][y][z] else "-")+s+"("+c+str(x+n)+
-                        ","+c+str(y+n)+","+c+str(z+n)+")" 
-                    for x in base for y in base for z in base]                        
-            elif s>="A" and s<="Z": # prefix binary relation
-                return [("" if rel[s][x][y] else "-")+s+"("+c+str(x+n)+
+            if type(rel[s][0][0]) == list:  # prefix ternary relation
+                return [("" if rel[s][x][y][z] else "-")+s+"("+c+str(x+n) +
+                        ","+c+str(y+n)+","+c+str(z+n)+")"
+                        for x in base for y in base for z in base]
+            elif s >= "A" and s <= "Z":  # prefix binary relation
+                return [("" if rel[s][x][y] else "-")+s+"("+c+str(x+n) +
                         ","+c+str(y+n)+")" for x in base for y in base]
-            else: # infix binary relation
-                return [("(" if rel[s][x][y] else "-(")+c+str(x+n)+" "+
+            else:  # infix binary relation
+                return [("(" if rel[s][x][y] else "-(")+c+str(x+n)+" " +
                         s+" "+c+str(y+n)+")" for x in base for y in base]
-        else: return [("" if rel[s][x] else "-")+s+"("+c+str(x+n)+")"
-                      for x in base]
-    else: return "not a relation"
+        else:
+            return [("" if rel[s][x] else "-")+s+"("+c+str(x+n)+")"
+                    for x in base]
+    else:
+        return "not a relation"
 
-def op_hom(A,B): # return string of homomorphism equations
+
+def op_hom(A, B):  # return string of homomorphism equations
     st = ''
     for s in B.operations:
         if type(B.operations[s]) == list:
             if type(B.operations[s][0]) == list:
                 st += " & h(x "+s+" y) = h(x) "+s+" h(y)"
-            elif s=="'": st += " & h(x') = h(x)'"
-            else: st += " & h("+s+"(x)) = "+s+"(h(x))"
-        else: st += " & h("+str(B.operations[s]+A.cardinality)+") = "+str(A.operations[s])
+            elif s == "'":
+                st += " & h(x') = h(x)'"
+            else:
+                st += " & h("+s+"(x)) = "+s+"(h(x))"
+        else:
+            st += " & h("+str(B.operations[s] +
+                              A.cardinality)+") = "+str(A.operations[s])
     return st
 
-def aritystr(t): return ("(_,_)" if type(t[0])==list else "(_)") if type(t)==list else ""
 
-def op2li(t): return ([x for y in t for x in y] if type(t[0])==list else t) if type(t)==list else [t]
+def aritystr(t): return ("(_,_)" if type(
+    t[0]) == list else "(_)") if type(t) == list else ""
+
+
+def op2li(t): return ([x for y in t for x in y] if type(
+    t[0]) == list else t) if type(t) == list else [t]
+
 
 class Model():
     def __init__(self, cardinality, index=None, operations={}, relations={},
@@ -167,21 +194,23 @@ class Model():
         self.index = index
         self.operations = operations
         self.relations = relations
-        for attr in kwargs: setattr(self,attr,kwargs[attr])
+        for attr in kwargs:
+            setattr(self, attr, kwargs[attr])
 
     def __repr__(self):
         """
         display a model
         """
-        st = '\nModel(cardinality = '+str(self.cardinality)+\
-             (', index = '+str(self.index) if self.index!=None else '')
+        st = '\nModel(cardinality = '+str(self.cardinality) +\
+             (', index = '+str(self.index) if self.index != None else '')
         if self.operations != {}:
             st += ', operations = {' + oprelstr(self.operations) + '}'
         if self.relations != {}:
             st += ', relations = {' + oprelstr(self.relations) + '}'
-        other = set(vars(self)) - set(["cardinality", "index", "operations", "relations"])
+        other = set(vars(self)) - \
+            set(["cardinality", "index", "operations", "relations"])
         for attr in other:
-            st += ',\n' + attr + ' = ' + str(getattr(self,attr))
+            st += ',\n' + attr + ' = ' + str(getattr(self, attr))
         return st + ')'
 
     def positive_diagram(self, c):
@@ -201,79 +230,96 @@ class Model():
         """
         li = []
         for x in range(self.cardinality):
-            for y in range(x+1,self.cardinality):
+            for y in range(x+1, self.cardinality):
                 li += ["-("+c+str(x+s)+"="+c+str(y+s)+")"]
         for x in self.operations:
             li += op_var_diag(self.operations, x, c, s)
         for x in self.relations:
             li += rel_var_diag(self.relations, x, c, s)
         return li
-                    
+
     def find_extensions(self, cls, cardinality, mace_time=60):
         """
         Find extensions of this model of given cardinality card in FOclass cls
         """
         n = self.cardinality
-        ne = ['c'+str(x)+'!=c'+str(y) for x in range(n) for y in range(x+1,n)]
-        return prover9(cls.axioms+ne+self.positive_diagram('c'), [], 
-                       mace_time,0,cardinality)
+        ne = ['c'+str(x)+'!=c'+str(y) for x in range(n) for y in range(x+1, n)]
+        return prover9(cls.axioms+ne+self.positive_diagram('c'), [],
+                       mace_time, 0, cardinality)
 
     def inS(self, B, info=False):
         """
         check if self is a subalgebra of B, if so return sublist of B
         """
-        if self.cardinality > B.cardinality: return False
-        if info: print(self.diagram('a')+B.diagram(''))
-        m = prover9(self.diagram('a')+B.diagram(''),[],6000,0,B.cardinality,[],True)
-        if len(m)==0: return False
+        if self.cardinality > B.cardinality:
+            return False
+        if info:
+            print(self.diagram('a')+B.diagram(''))
+        m = prover9(self.diagram('a')+B.diagram(''), [],
+                    6000, 0, B.cardinality, [], True)
+        if len(m) == 0:
+            return False
         return [m[0].operations['a'+str(i)] for i in range(self.cardinality)]
 
     def inH(self, B, info=False):
         """
         check if self is a homomorphic image of B, if so return homomorphism
         """
-        if self.cardinality > B.cardinality: return False
-        formulas = self.diagram('')+B.diagram('',self.cardinality)+\
-            ['A('+str(i)+')' for i in range(self.cardinality)]+\
-            ['-B('+str(i)+')' for i in range(self.cardinality)]+\
-            ['B('+str(i)+')' for i in range(self.cardinality,self.cardinality+B.cardinality)]+\
-            ['-A('+str(i)+')' for i in range(self.cardinality,self.cardinality+B.cardinality)]+\
-            ['B(x) & B(y) -> A(h(x)) & A(h(y))'+op_hom(self,B),
+        if self.cardinality > B.cardinality:
+            return False
+        formulas = self.diagram('')+B.diagram('', self.cardinality) +\
+            ['A('+str(i)+')' for i in range(self.cardinality)] +\
+            ['-B('+str(i)+')' for i in range(self.cardinality)] +\
+            ['B('+str(i)+')' for i in range(self.cardinality, self.cardinality+B.cardinality)] +\
+            ['-A('+str(i)+')' for i in range(self.cardinality, self.cardinality+B.cardinality)] +\
+            ['B(x) & B(y) -> A(h(x)) & A(h(y))'+op_hom(self, B),
              'A(y) -> exists x (B(x) & h(x) = y)']
-        if info: print(formulas)
-        m = prover9(formulas,[],6000,0,self.cardinality+B.cardinality,[],True)
-        if len(m)==0: return False
+        if info:
+            print(formulas)
+        m = prover9(formulas, [], 6000, 0,
+                    self.cardinality+B.cardinality, [], True)
+        if len(m) == 0:
+            return False
         return m[0].operations['h'][self.cardinality:]
 
     @staticmethod
     def mace4format(A):
-        if A.is_lattice(): A.get_join()
-        st = "interpretation("+str(A.cardinality)+", [number = "+str(A.index)+", seconds = 0], [\n"
-        st += ',\n'.join([" function("+s+aritystr(A.operations[s])+", "+str(op2li(A.operations[s])).replace(" ","")+")" for s in A.operations])
-        if len(A.operations)>0 and len(A.relations)>0: st += ',\n'
-        st += ',\n'.join([" relation("+s+aritystr(A.relations[s])+", "+str(op2li(A.relations[s])).replace(" ","")+")" for s in A.relations])
+        if A.is_lattice():
+            A.get_join()
+        st = "interpretation("+str(A.cardinality) + \
+            ", [number = "+str(A.index)+", seconds = 0], [\n"
+        st += ',\n'.join([" function("+s+aritystr(A.operations[s])+", " +
+                          str(op2li(A.operations[s])).replace(" ", "")+")" for s in A.operations])
+        if len(A.operations) > 0 and len(A.relations) > 0:
+            st += ',\n'
+        st += ',\n'.join([" relation("+s+aritystr(A.relations[s])+", " +
+                          str(op2li(A.relations[s])).replace(" ", "")+")" for s in A.relations])
         return st+"])."
+
 
 def isofilter(li):
     st = "\n".join([x.mace4format() for x in li])
     st = run_program(['isofilter'], st)
-    st = run_program(['interpformat','portable'], st)
-    l = eval(st.replace("\\","\\\\"))
+    st = run_program(['interpformat', 'portable'], st)
+    l = eval(st.replace("\\", "\\\\"))
     models = []
     for m in l:
-        models += [Model(m[0],m[1][0][9:-1],getops(m[2],'function'),getops(m[2],'relation'))]
+        models += [Model(m[0], m[1][0][9:-1], getops(m[2],'function'), getops(m[2], 'relation'))]
     return models
 
-def getops(li,st): # extract operations/relations from the Prover9 model
-    return dict([op[1],op[3]] for op in li if op[0] == st)
 
-def proofstep2list(st): # convert a line of the Prover9 proof to a list
+def getops(li, st):  # extract operations/relations from the Prover9 model
+    return dict([op[1], op[3]] for op in li if op[0] == st)
+
+
+def proofstep2list(st):  # convert a line of the Prover9 proof to a list
     li = st.split('.')
     ind = li[0].find(' ')
     return [eval(li[0][:ind])]+[li[0][ind+1:]]+[eval(li[-2])]
 
-def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=None, 
-       options=[], one=False, noniso=True, hints_list=None, keep_list=None, delete_list=None):
+
+def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=None,
+            options=[], one=False, noniso=True, hints_list=None, keep_list=None, delete_list=None):
     """
     Invoke Prover9/Mace4 with lists of formulas and some (limited) options
 
@@ -302,75 +348,85 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
                                                 # Boolean groups have cardinality 2^k
     """
     in_str = ''
-    options = ['op(350,prefix,"~")','op(499,infix_left,["*","/","\","@"])',
-                'op(599,infix_left,["+","^","v"])']+options  #add default options
-    for st in options: in_str += st+'.\n'
+    options = ['op(350,prefix,"~")', 'op(499,infix_left,["*","/","\","@"])',
+               'op(599,infix_left,["+","^","v"])']+options  # add default options
+    for st in options:
+        in_str += st+'.\n'
     in_str += 'formulas(assumptions).\n'
-    for st in assume_list: in_str += st+'.\n'
+    for st in assume_list:
+        in_str += st+'.\n'
     in_str += 'end_of_list.\nformulas(goals).\n'
-    for st in goal_list: in_str += st+'.\n'
+    for st in goal_list:
+        in_str += st+'.\n'
     in_str += 'end_of_list.\n'
-    if mace_seconds!=0:
+    if mace_seconds != 0:
         mace_params = []
         if cardinality != None:
             st = str(cardinality)
-            mace_params = ['-n',st,'-N',st]+([] if one else ['-m','-1'])+['-S','1']
-        out_str = run_program(['mace4','-t',str(mace_seconds)]+mace_params, in_str)
+            mace_params = ['-n', st, '-N', st] + \
+                ([] if one else ['-m', '-1'])+['-S', '1']
+        out_str = run_program(
+            ['mace4', '-t', str(mace_seconds)]+mace_params, in_str)
         #print(str(mace_params)+"**"+out_str)
         ind = out_str.find("%%ERROR")
-        if ind != -1: 
+        if ind != -1:
             print(out_str[ind+2:])
             return
         if out_str.find('Exiting with failure') == -1:
-            if cardinality != None and not one and noniso: #find all models of size n
-                out_str = run_program(['interpformat','standard'], out_str)
+            if cardinality != None and not one and noniso:  # find all models of size n
+                out_str = run_program(['interpformat', 'standard'], out_str)
                 params = '\"+ * v ^ \' - ~ \\ / -> A B C D E F G H I J K P Q R S T U V W a b c d e f g h i j k p q r s t 0 1 <= -<\"'
-                out_str = run_program(['isofilter','check',params,'output',params], out_str)
-                out_str = run_program(['interpformat','portable'], out_str)
+                out_str = run_program(
+                    ['isofilter', 'check', params, 'output', params], out_str)
+                out_str = run_program(['interpformat', 'portable'], out_str)
             else:
-                out_str = run_program(['interpformat','portable'], out_str)
-            if out_str!='':
+                out_str = run_program(['interpformat', 'portable'], out_str)
+            if out_str != '':
                 #print(out_str)
-                li = eval(out_str.replace("\\","\\\\"))
+                li = eval(out_str.replace("\\", "\\\\"))
             else:
                 print("No models found (so far)")
                 return
             models = []
             for m in li:
-                models += [Model(m[0],len(models),getops(m[2],'function'),getops(m[2],'relation'))]
+                models += [Model(m[0], len(models), getops(m[2],'function'), getops(m[2], 'relation'))]
             if cardinality != None and not one:
-                print("Number of "+("nonisomorphic " if noniso else "")+ "models of cardinality", cardinality,
+                print("Number of "+("nonisomorphic " if noniso else "") + "models of cardinality", cardinality,
                       " is ", len(models))
             return models
         elif cardinality != None and out_str.find('exit (exhausted)') != -1:
-            if not one: print('No model of cardinality '+str(cardinality))
+            if not one:
+                print('No model of cardinality '+str(cardinality))
             return []
-        elif mace_seconds>=5: return "No models found after "+mace_seconds+" seconds"
+        elif mace_seconds >= 5:
+            return "No models found after "+mace_seconds+" seconds"
 
-    out_str = run_program(['prover9','-t',str(prover_seconds)], in_str)
+    out_str = run_program(['prover9', '-t', str(prover_seconds)], in_str)
     ind = out_str.find("%%ERROR")
-    if ind != -1: 
+    if ind != -1:
         print(out_str[ind+2:])
         return
-    if True:#res==0 or res==1 or res==256: 
-        out_str = run_program(['prooftrans','expand','renumber', 'parents_only'], out_str)
+    if True:  # res==0 or res==1 or res==256:
+        out_str = run_program(['prooftrans', 'expand', 'renumber', 'parents_only'], out_str)
         lst = []
         ind1 = out_str.find("PROOF ===")
         ind2 = out_str.find("end of proof ===")
         while ind1 != -1:
-            lst.append([proofstep2list(x) for x in out_str[ind1:ind2].split('\n')[10:-2]])
-            ind1 = out_str.find("PROOF ===",ind2)
-            ind2 = out_str.find("end of proof ===",ind2+1)
+            lst.append([proofstep2list(x)
+                        for x in out_str[ind1:ind2].split('\n')[10:-2]])
+            ind1 = out_str.find("PROOF ===", ind2)
+            ind2 = out_str.find("end of proof ===", ind2+1)
         return [Proof(li) for li in lst]
     print('No conclusion (timeout)')
     return 'No conclusion (timeout)'
 
+
 def p9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=None):
-    if type(cardinality) == int or cardinality==None: 
+    if type(cardinality) == int or cardinality == None:
         return prover9(assume_list, goal_list, mace_seconds, prover_seconds, cardinality)
     else:
-        algs = [[],[1]]+[[] for i in range(2,cardinality[0]+1)]
-        for i in range(2,cardinality[0]+1):
+        algs = [[], [1]]+[[] for i in range(2, cardinality[0]+1)]
+        for i in range(2, cardinality[0]+1):
             algs[i] = prover9(assume_list, goal_list, mace_seconds, prover_seconds, i)
-        print("Fine spectrum: ",[len(x) for x in algs[1:]])
+        print("Fine spectrum: ", [len(x) for x in algs[1:]])
         return algs
