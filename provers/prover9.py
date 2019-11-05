@@ -319,7 +319,7 @@ def proofstep2list(st):  # convert a line of the Prover9 proof to a list
 
 
 def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=None,
-            options=[], one=False, noniso=True, hints_list=None, keep_list=None, delete_list=None):
+            options=[], one=False, noniso=True, info=False): #later: hints_list=[], keep_list=[], delete_list=[]
     """
     Invoke Prover9/Mace4 with lists of formulas and some (limited) options
 
@@ -332,8 +332,9 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
             if cardinality = n (>=2), search for all nonisomorphic models of
             cardinality n. If cardinality = [n] find all models of cardinality 2 to n
         options -- list of prover9 options (default [], i.e. none)
-        hints_list, keep_list, delete_list -- additional lists of formulas.
-            See Prover9 manual (prover9.org) for details
+        one -- find only one model of given cardinality
+        noniso -- if True, remove isomorphic copies
+        info -- print input and output of prover9
 
     EXAMPLES:
         >>> p9(['x=x'], ['x=x']) # trivial proof
@@ -359,15 +360,20 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
     for st in goal_list:
         in_str += st+'.\n'
     in_str += 'end_of_list.\n'
+    if info:
+        print(in_str)
     if mace_seconds != 0:
         mace_params = []
         if cardinality != None:
             st = str(cardinality)
             mace_params = ['-n', st, '-N', st] + \
                 ([] if one else ['-m', '-1'])+['-S', '1']
+        if info:
+            print(mace_params)
         out_str = run_program(
             ['mace4', '-t', str(mace_seconds)]+mace_params, in_str)
-        #print(str(mace_params)+"**"+out_str)
+        if info:
+            print(out_str)
         ind = out_str.find("%%ERROR")
         if ind != -1:
             print(out_str[ind+2:])
@@ -375,7 +381,7 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
         if out_str.find('Exiting with failure') == -1:
             if cardinality != None and not one and noniso:  # find all models of size n
                 out_str = run_program(['interpformat', 'standard'], out_str)
-                params = '\"+ * v ^ \' - ~ \\ / -> A B C D E F G H I J K P Q R S T U V W a b c d e f g h i j k p q r s t 0 1 <= -<\"'
+                params = '\" + * v ^ \' - ~ \\ / -> A B C D E F G H I J K P Q R S T U V W a b c d e f g h i j k p q r s t 0 1 <= -<\"'
                 out_str = run_program(
                     ['isofilter', 'check', params, 'output', params], out_str)
                 out_str = run_program(['interpformat', 'portable'], out_str)
@@ -402,6 +408,8 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
             return "No models found after "+mace_seconds+" seconds"
 
     out_str = run_program(['prover9', '-t', str(prover_seconds)], in_str)
+    if info:
+        print(out_str)
     ind = out_str.find("%%ERROR")
     if ind != -1:
         print(out_str[ind+2:])
