@@ -204,9 +204,9 @@ class Model():
         st = '\nModel(cardinality = '+str(self.cardinality) +\
              (', index = '+str(self.index) if self.index != None else '')
         if self.operations != {}:
-            st += ', operations = {' + oprelstr(self.operations) + '}'
+            st += ',\noperations = {' + oprelstr(self.operations) + '}'
         if self.relations != {}:
-            st += ', relations = {' + oprelstr(self.relations) + '}'
+            st += ',\nrelations = {' + oprelstr(self.relations) + '}'
         other = set(vars(self)) - \
             set(["cardinality", "index", "operations", "relations"])
         for attr in other:
