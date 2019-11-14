@@ -28,6 +28,9 @@ class Relation(object):
     def __call__(self, *arguments):
         return Predicate(self, arguments)
 
+    def __repr__(self):
+        return 'Relation("'+self.name+'",'+str(self.arity)+')'
+
 
 class Function(object):
     def __init__(self, name, arity):
@@ -37,6 +40,9 @@ class Function(object):
 
     def __call__(self, *arguments):
         return Composition(self, arguments)
+
+    def __repr__(self):
+        return 'Function("'+self.name+'",'+str(self.arity)+')'
 
 
 class Term(object):
@@ -49,6 +55,8 @@ class Variable(Term):
         super().__init__()
         self.name = name
 
+    def __repr__(self):
+        return '"'+self.name+'"'
 
 class Composition(Term):
     def __init__(self, function, arguments):
@@ -80,6 +88,9 @@ class Predicate(Formula):
     def __invert__(self):
         return Not(self)
 
+    def __repr__(self):
+        return str(self.relation)+'('+','.join([str(x) for x in self.arguments])+')'
+
 
 class And(Formula):
     def __init__(self, first, second):
@@ -91,6 +102,9 @@ class And(Formula):
 
     def __invert__(self):
         return Not(self)
+
+    def __repr__(self):
+        return str(self.first)+' & '+str(self.second)
 
 
 class Or(Formula):
@@ -104,6 +118,9 @@ class Or(Formula):
     def __invert__(self):
         return Not(self)
 
+    def __repr__(self):
+        return str(self.first)+' | '+str(self.second)
+
 
 class Not(Formula):
     def __init__(self, other):
@@ -113,6 +130,9 @@ class Not(Formula):
 
     def __invert__(self):
         return self.other
+
+    def __repr__(self):
+        return '~'+str(self.other)
 
 
 class Equals(Formula):
@@ -125,3 +145,4 @@ class Equals(Formula):
 
     def __invert__(self):
         return Not(self)
+
