@@ -33,7 +33,7 @@ def run_program(args, input, timeout=None):
             input=str(input),
             timeout=None if timeout is None else float(timeout),
             stdout=subprocess.PIPE,
-            stderr=STDOUT,
+            stderr=subprocess.STDOUT,
             encoding='ascii')
         return r.stdout
     except subprocess.TimeoutExpired:
