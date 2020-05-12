@@ -319,7 +319,7 @@ def proofstep2list(st):  # convert a line of the Prover9 proof to a list
 
 
 def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=None,
-            options=[], one=False, noniso=True, info=False): #later: hints_list=[], keep_list=[], delete_list=[]
+            options=[], one=False, noniso=True, info=False, params=''): #later: hints_list=[], keep_list=[], delete_list=[]
     """
     Invoke Prover9/Mace4 with lists of formulas and some (limited) options
 
@@ -381,7 +381,10 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
         if out_str.find('Exiting with failure') == -1:
             if cardinality != None and not one and noniso:  # find all models of size n
                 out_str = run_program(['interpformat', 'standard'], out_str)
-                params = '\" + * v ^ \' - ~ \\ / -> A B C D E F G H I J K P Q R S T U V W a b c d e f g h i j k p q r s t 0 1 <= -<\"'
+                if params=='':
+                    params = '\" + * v ^ \' - ~ \\ / -> A B C D E F G H I J K P Q R S T U V W a b c d e f g h i j k p q r s t 0 1 <= -<\"'
+                else:
+                    params = '\" '+params+' \"'
                 out_str = run_program(
                     ['isofilter', 'check', params, 'output', params], out_str)
                 out_str = run_program(['interpformat', 'portable'], out_str)
@@ -429,12 +432,12 @@ def prover9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinali
     return 'No conclusion (timeout)'
 
 
-def p9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=None):
+def p9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=None, params='', info=False):
     if type(cardinality) == int or cardinality == None:
-        return prover9(assume_list, goal_list, mace_seconds, prover_seconds, cardinality)
+        return prover9(assume_list, goal_list, mace_seconds, prover_seconds, cardinality, params=params, info=info)
     else:
         algs = [[], [1]]+[[] for i in range(2, cardinality[0]+1)]
         for i in range(2, cardinality[0]+1):
-            algs[i] = prover9(assume_list, goal_list, mace_seconds, prover_seconds, i)
+            algs[i] = prover9(assume_list, goal_list, mace_seconds, prover_seconds, i, params=params, info=info)
         print("Fine spectrum: ", [len(x) for x in algs[1:]])
         return algs

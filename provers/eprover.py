@@ -53,8 +53,10 @@ def E(assume_list, goal_list, prover_seconds=60, format='tptp', info=False, opti
             in_str += st+'.\n'
         in_str += 'end_of_list.\n'
         if info:
-            print(in_str)
+            print("+++"+in_str)
         in_str = run_program(['ladr_to_tptp',''],in_str)
+        if info:
+            print("***"+in_str)
     else:
         i = 0
         for st in assume_list:
@@ -63,11 +65,13 @@ def E(assume_list, goal_list, prover_seconds=60, format='tptp', info=False, opti
         for st in goal_list:
             in_str += 'fof(c_c_'+str(i)+',conjecture,'+st+').\n'
             i += 1
+        if info:
+            print("***"+in_str)
     out_str = run_program(['eprover', '--proof-object', '-'], in_str)
     proof = out_str.find("Proof found!")
     satis = out_str.find("CounterSatisfiable")
     if info:
-        print(out_str)
+        print("&&&"+out_str)
     if proof != -1 or satis != -1:
         lst = out_str.split('\n')
         lst = [s[4:-2] for s in lst if s != "" and s[0] != "#"]
