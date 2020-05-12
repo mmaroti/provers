@@ -21,5 +21,5 @@ except DistributionNotFound:
 
 from .util import get_program_path, run_program, print_versions
 from .fol import *
-from .prover9 import Model, Proof, prover9, p9, isofilter
+from .prover9 import Model, Proof, prover9, p9, isofilter, p9latex, m4diag
 from .eprover import E
