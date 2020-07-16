@@ -446,7 +446,7 @@ def p9(assume_list, goal_list, mace_seconds=2, prover_seconds=60, cardinality=No
 import networkx as nx
 from graphviz import Graph
 from IPython.display import display_html
-def hasse_diagram(op,rel,dual):
+def hasse_diagram(op,rel,dual,unary=[]):
     A = range(len(op))
     G = nx.DiGraph()
     if rel:
@@ -459,28 +459,33 @@ def hasse_diagram(op,rel,dual):
         pass
     P = Graph()
     P.attr('node', shape='circle', width='.15', height='.15', fixedsize='true', fontsize='10')
-    for x in A: P.node(str(x))
+    for x in A: P.node(str(x), color='red' if unary[x] else 'black')
     P.edges([(str(x[0]),str(x[1])) for x in G.edges])
     return P
 
-def m4diag(li,symbols="<= v"):
+def m4diag(li,symbols="<= v", unaryRel=""):
+    # use graphviz to display a mace4 structure as a diagram
+    # symbols is a list of binary symbols that define a poset or graph
+    # unaryRel is a unary relation symbol that is displayed by red nodes
     i = 0
     sy = symbols.split(" ")
-    print(sy)
+    #print(sy)
     st = ""
     for x in li:
         i+=1
         st+=str(i)
+        uR = x.relations[unaryRel] if unaryRel!="" else [0]*x.cardinality
         for s in sy:
             t = s[:-1] if s[-1]=='d' else s
             if t in x.operations.keys():
-                st+=hasse_diagram(x.operations[t],False,s[-1]=='d')._repr_svg_()+"&nbsp; &nbsp; &nbsp; "
+                st+=hasse_diagram(x.operations[t],False,s[-1]=='d',uR)._repr_svg_()+"&nbsp; &nbsp; &nbsp; "
             elif t in x.relations.keys():
-                st+=hasse_diagram(x.relations[t], True, s[-1]=='d')._repr_svg_()+"&nbsp; &nbsp; &nbsp; "
+                st+=hasse_diagram(x.relations[t], True, s[-1]=='d',uR)._repr_svg_()+"&nbsp; &nbsp; &nbsp; "
         st+=" &nbsp; "
     display_html(st,raw=True)
 
 def p9latex(pf, latex=False):
+    # print a proof in latex format (slightly more readable)
     from IPython.display import display, Math
     import re
     la = [str(li[0])+"\\quad "+re.sub(r"c(\d)",r"c_\1",li[1]).\
@@ -493,3 +498,15 @@ def p9latex(pf, latex=False):
     if latex: return "$"+"$\n\n$".join(la)+"$"
     else:
         for st in la: display(Math(st))
+
+def p9lean(pf):
+    # print a proof in Lean syntax
+    la = [str(li[0])+"     "+li[1].\
+          replace("c1","x₁").replace("c2","y₂").replace("c3","z₃").\
+          replace(" * ","⬝").replace("<=","≤").replace("!=","≠").\
+          replace(" \\ ","﹨").replace("-(","¬(").replace("<->","↔").\
+          replace(" / ","/").replace("->","→").replace("exists","∃").\
+          replace("# label(non_clause)","").replace("# label(goal)","  (goal)").\
+          replace("&","∧").replace("|","∨").replace("$F","F")\
+          +"   "+str(li[2]) for li in pf[0].proof]
+    return la #"\n".join(la)
